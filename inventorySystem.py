@@ -1,3 +1,16 @@
+import logging
+from datetime import datetime
+
+# logger
+
+def logger_helper():
+    logging.basicConfig(filename='/Users/hammdone/PycharmProjects/PythonProject/codeLogs.log',
+                        level=logging.INFO,
+                        format='%(asctime)s - %(levelname)s: %(message)s')
+    return logging.getLogger(__name__)
+
+logger = logger_helper()
+
 # categories set
 categories = {}
 
@@ -20,26 +33,25 @@ inventory = {}
 # decorator
 def decorator(func, m):
     def wrapper(*args, **kwargs):
-        print(f"\nAction: {m}")
+        logger.info(f"Action: {m}")
         func(*args, **kwargs)
-        print(f"Done with: {m}")
     return wrapper
 
 # helper functions
 def add_product(name, price, quantity, category):
     inventory[name] = Product(name, price, quantity, category)
-    print(f"Product {name} added to inventory.")
+    logger.info(f"Product {name} added to inventory.")
 
 def update_quantity(name, change):
     inventory[name].quantity += change
-    print(f"Quantity for {name} is updated to {inventory[name].quantity}")
+    logger.info(f"Quantity for {name} is updated to {inventory[name].quantity}")
 
 def remove_product(name):
     if name in inventory:
         del inventory[name]
-        print(f"Product {name} removed from inventory.")
+        logger.info(f"Product {name} removed from inventory.")
     else:
-        print(f"Product {name} not found in inventory.")
+        logger.info(f"Product {name} not found in inventory.")
 
 def display_inventory():
     print("\n------------------- Inventory -------------------")
@@ -53,16 +65,17 @@ def search_product(name):
         inventory[name].display_info()
         print("-" * 30)
     else:
-        print("Product was not found.")
+        logger.info(f"Product {name} not found in inventory.")
 
-def updateActions(newActions, myList):
+def update_actions(newActions, myList):
     if len(myList) > 2:
         del myList[0]
     myList.append(newActions)
 
-    print("\nLast Actions: ")
+    logger.info(f"Last 3 Actions: {myList}")
     for i in myList:
-        print(i)
+        # print(i)
+        logger.info(i)
 
 # applying decorator
 add_product = decorator(add_product, "Adding a product")
@@ -93,7 +106,7 @@ def main():
 
                 newActions = (f"Added {n}")
                 my_list = list(lastActions)
-                updateActions(newActions, my_list)
+                update_actions(newActions, my_list)
                 lastActions = tuple(my_list)
 
             elif choice == "2":
@@ -109,7 +122,7 @@ def main():
 
                 newActions = (f"Changed quantity of {n}")
                 my_list = list(lastActions)
-                updateActions(newActions, my_list)
+                update_actions(newActions, my_list)
                 lastActions = tuple(my_list)
 
 
@@ -119,7 +132,7 @@ def main():
 
                 newActions = (f"Removed {n}")
                 my_list = list(lastActions)
-                updateActions(newActions, my_list)
+                update_actions(newActions, my_list)
                 lastActions = tuple(my_list)
 
             elif choice == "4":
@@ -127,7 +140,7 @@ def main():
 
                 newActions = ("Displayed inventory.")
                 my_list = list(lastActions)
-                updateActions(newActions, my_list)
+                update_actions(newActions, my_list)
                 lastActions = tuple(my_list)
 
             elif choice == "5":
@@ -135,7 +148,7 @@ def main():
 
                 newActions = ("Searched for a product.")
                 my_list = list(lastActions)
-                updateActions(newActions, my_list)
+                update_actions(newActions, my_list)
                 lastActions = tuple(my_list)
 
             elif choice == "6":
@@ -145,6 +158,7 @@ def main():
                 raise Exception("Invalid choice. Choose a number between 1 and 6.")
 
         except Exception as e:
-            print(f"\nError: {e} \nTry again.")
+            # print(f"\nError: {e} \nTry again.")
+            logger.error(e)
 
 main()
